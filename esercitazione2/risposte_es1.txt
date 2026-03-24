@@ -1,0 +1,30 @@
+ESERCITAZIONE 2 - OSSERVAZIONI SUL POSIZIONAMENTO IN MEMORIA
+==============================================================
+
+1. SPIEGAZIONE DEL RISULTATO (x = 0)
+Eseguendo il programma e stampando il valore finale della variabile 'x' alla riga 14, il risultato ottenuto è 0, nonostante 'x' fosse stata inizializzata a 1. 
+
+Questo comportamento anomalo è causato dall'istruzione a riga 12: (&y)[1] = 0;
+- L'operatore '&y' recupera l'indirizzo di memoria della variabile 'y' (che è di tipo float).
+- Aggiungendo '[1]', stiamo istruendo il programma a trattare quell'indirizzo come se fosse un array e a spostarsi in avanti di una "cella" di memoria. La dimensione del salto corrisponde alla dimensione del tipo float (tipicamente 4 byte).
+- Poiché il compilatore ha posizionato la variabile 'x' (di tipo int, anch'essa di 4 byte) nello Stack di memoria esattamente nello spazio contiguo e successivo a 'y', fare un salto in avanti di 1 a partire da 'y' fa puntare esattamente all'indirizzo di 'x'.
+- L'assegnazione finale '= 0' va quindi a sovrascrivere direttamente lo spazio di memoria di 'x', modificandone il valore a nostra insaputa (fenomeno di buffer overflow o out-of-bounds access).
+
+2. RAPPRESENTAZIONE GRAFICA DELLA MEMORIA (STACK)
+L'ordine esatto può variare a seconda del compilatore (es. GCC vs Clang), ma la disposizione relativa che permette la sovrascrittura di 'x' partendo da 'y' è la seguente:
+
+INDIRIZZI PIÙ ALTI (Crescita verso l'alto)
+|                                |
+|  x  (int, 4 byte)              |  <--- (&y)[1] atterra qui e ci scrive '0'
+|--------------------------------|
+|  y  (float, 4 byte)            |  <--- &y punta all'inizio di questa cella
+|--------------------------------|
+|  ai (array int, 12 byte)       |
+|--------------------------------|
+|  af (array float, 32 byte)     |
+|--------------------------------|
+|  ad (array double, 32 byte)    |
+|                                |
+INDIRIZZI PIÙ BASSI 
+
+L'indirizzo di memoria di ogni elemento precedente dell'array precede l'indirizzo dell'elemento successivo (es. &ad[0] viene prima di &ad[1]).
