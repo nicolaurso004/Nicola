@@ -1,0 +1,7 @@
+OSSERVAZIONI SUI TEST DI ORDINAMENTO
+
+1. La Soglia: Dai test effettuati su vettori pre-allocati e compilati in modalità Release, emerge chiaramente che per array di piccole dimensioni (fino a circa 60-80 elementi), l'Insertion Sort (algoritmo quadratico) è costantemente più veloce di Mergesort e Quicksort (algoritmi logaritmici). Questo è dovuto all'assenza di chiamate ricorsive e all'eccellente località in cache.
+
+2. Quicksort Ibrido: Implementando una soglia (impostata a 50) al di sotto della quale il Quicksort delega l'ordinamento all'Insertion Sort, si ottimizzano i tempi eliminando l'overhead della ricorsione sulle piccole partizioni.
+
+3. std::sort(): Nonostante le ottimizzazioni apportate col Quicksort Ibrido, la funzione std::sort() della libreria standard rimane impareggiabile sui grandi numeri. Questo perché implementa l'Introsort (un ibrido ancora più complesso tra Quicksort, Heapsort e Insertion Sort) profondamente ottimizzato a livello di compilatore.
